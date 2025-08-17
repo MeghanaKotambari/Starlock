@@ -1,7 +1,10 @@
-import React from "react"
-import { Sparkles, Lock, Star } from "lucide-react"
+import React from "react";
+import { Sparkles, Lock, Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-gray-100 text-gray-800 flex flex-col">
       {/* Hero Section */}
@@ -10,10 +13,12 @@ const LandingPage = () => {
           Welcome to <span className="text-purple-600">Starlock</span>
         </h1>
         <p className="mt-4 text-lg max-w-2xl text-gray-600">
-          “Lock your memories today, unlock them tomorrow ✨” 
-        
+          “Lock your memories today, unlock them tomorrow ✨”
         </p>
-        <button className="mt-6 rounded-xl bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 text-lg shadow-md transition">
+        <button
+          onClick={() => navigate("/login")}
+          className="mt-6 rounded-xl bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 text-lg shadow-md transition"
+        >
           Get Started
         </button>
       </header>
@@ -53,12 +58,7 @@ const LandingPage = () => {
         <h2 className="text-3xl font-bold text-gray-900">
           Ready to Lock Your Memories?
         </h2>
-        <p className="mt-3 text-gray-600">
-          Create your digital capsule today.
-        </p>
-        <button className="mt-6 rounded-xl bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 text-lg shadow-md transition">
-          Start Now
-        </button>
+        <p className="mt-3 text-gray-600">Create your digital capsule today.</p>
       </section>
 
       {/* Footer */}
@@ -66,7 +66,7 @@ const LandingPage = () => {
         © {new Date().getFullYear()} Starlock. All rights reserved.
       </footer>
     </div>
-  )
-}
+  );
+};
 
-export default LandingPage
+export default LandingPage;

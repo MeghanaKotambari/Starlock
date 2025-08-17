@@ -1,30 +1,90 @@
 import React, { useState } from "react";
+import axios from "axios";
 import { Mic, Upload, GalleryVerticalEnd, Trash2 } from "lucide-react";
 
 const AudioPage = () => {
   const [audios, setAudios] = useState([]);
+  const [uploadingIndex, setUploadingIndex] = useState(null);
 
-  // Handle file upload/record
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     const newAudios = files.map((file) => ({
+      file,
       src: URL.createObjectURL(file),
       description: "",
+      ipfsHash: null,
     }));
     setAudios((prev) => [...prev, ...newAudios]);
   };
 
-  // Update description
   const handleDescriptionChange = (index, value) => {
-    const updatedAudios = [...audios];
-    updatedAudios[index].description = value;
-    setAudios(updatedAudios);
+    const updated = [...audios];
+    updated[index].description = value;
+    setAudios(updated);
   };
 
-  // Delete audio
   const handleDelete = (index) => {
-    const updatedAudios = audios.filter((_, i) => i !== index);
-    setAudios(updatedAudios);
+    setAudios((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleUpload = async (index) => {
+    const audio = audios[index];
+    if (!audio.description || !audio.file) {
+      alert("Please add a description before uploading.");
+      return;
+    }
+
+    setUploadingIndex(index);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", audio.file);
+      formData.append(
+        "pinataMetadata",
+        JSON.stringify({ name: audio.file.name })
+      );
+      formData.append("pinataOptions", JSON.stringify({ cidVersion: 1 }));
+
+      const res = await axios.post(
+        "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            pinata_api_key: import.meta.env.VITE_PINATA_API_KEY,
+            pinata_secret_api_key: import.meta.env.VITE_PINATA_SECRET_API_KEY,
+          },
+        }
+      );
+
+      const ipfsHash = res.data.IpfsHash;
+
+      const response = await axios.post(
+        "http://localhost:3000/api/starlock/audio/addAudio",
+        {
+          audio: ipfsHash,
+          audioDescription: audio.description,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      console.log(response.data);
+      alert("Audio uploaded to IPFS and sent to backend!");
+
+      // Mark uploaded in state
+      const updated = [...audios];
+      updated[index].ipfsHash = ipfsHash;
+      setAudios(updated);
+    } catch (err) {
+      console.error("Upload error:", err);
+      alert("Failed to upload audio.");
+    } finally {
+      setUploadingIndex(null);
+    }
   };
 
   return (
@@ -35,7 +95,7 @@ const AudioPage = () => {
           <div className="flex items-center justify-center space-x-3 mb-4">
             <GalleryVerticalEnd className="h-12 w-12 text-purple-500" />
             <h1 className="text-4xl font-extrabold text-purple-800 drop-shadow">
-             AudioTreasure
+              AudioTreasure
             </h1>
           </div>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -43,12 +103,13 @@ const AudioPage = () => {
           </p>
         </div>
 
-        {/* Upload & Record Section */}
+        {/* Upload & Record */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
-          {/* Upload Box */}
           <label className="cursor-pointer group flex flex-col items-center justify-center border-2 border-dashed border-purple-200 rounded-2xl p-10 bg-white/70 backdrop-blur-lg shadow-md hover:shadow-xl transition">
             <Upload className="h-14 w-14 text-purple-500 mb-3 group-hover:scale-110 transition" />
-            <span className="text-gray-800 font-semibold text-lg">Upload Audio</span>
+            <span className="text-gray-800 font-semibold text-lg">
+              Upload Audio
+            </span>
             <input
               type="file"
               accept="audio/*"
@@ -58,10 +119,11 @@ const AudioPage = () => {
             />
           </label>
 
-          {/* Record Box */}
           <label className="cursor-pointer group flex flex-col items-center justify-center border-2 border-dashed border-purple-200 rounded-2xl p-10 bg-white/70 backdrop-blur-lg shadow-md hover:shadow-xl transition">
             <Mic className="h-14 w-14 text-purple-500 mb-3 group-hover:scale-110 transition" />
-            <span className="text-gray-800 font-semibold text-lg">Record Audio</span>
+            <span className="text-gray-800 font-semibold text-lg">
+              Record Audio
+            </span>
             <input
               type="file"
               accept="audio/*"
@@ -72,7 +134,7 @@ const AudioPage = () => {
           </label>
         </div>
 
-        {/* Gallery Section */}
+        {/* Audio Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {audios.length > 0 ? (
             audios.map((audio, idx) => (
@@ -80,7 +142,6 @@ const AudioPage = () => {
                 key={idx}
                 className="relative bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg hover:shadow-2xl transition p-5 flex flex-col"
               >
-                {/* Delete Button */}
                 <button
                   onClick={() => handleDelete(idx)}
                   className="absolute top-3 right-3 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 shadow-md"
@@ -88,14 +149,8 @@ const AudioPage = () => {
                   <Trash2 className="h-4 w-4" />
                 </button>
 
-                {/* Audio Player */}
-                <audio
-                  src={audio.src}
-                  controls
-                  className="w-full mb-4"
-                />
+                <audio src={audio.src} controls className="w-full mb-4" />
 
-                {/* Description */}
                 <textarea
                   value={audio.description}
                   onChange={(e) => handleDescriptionChange(idx, e.target.value)}
@@ -103,6 +158,20 @@ const AudioPage = () => {
                   className="w-full text-gray-700 border border-purple-200 rounded-xl p-3 bg-gray-50/60 focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none"
                   rows={4}
                 />
+
+                <button
+                  onClick={() => handleUpload(idx)}
+                  disabled={uploadingIndex === idx || audio.ipfsHash}
+                  className={`mt-4 w-full ${
+                    audio.ipfsHash ? "bg-green-500" : "bg-purple-600"
+                  } text-white py-2 rounded-xl shadow hover:opacity-90 transition disabled:opacity-60`}
+                >
+                  {audio.ipfsHash
+                    ? "Uploaded ✅"
+                    : uploadingIndex === idx
+                    ? "Uploading..."
+                    : "Upload to IPFS"}
+                </button>
               </div>
             ))
           ) : (

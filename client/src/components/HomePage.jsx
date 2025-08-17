@@ -3,8 +3,8 @@ import { FileText, Image, Music, ListMusic, Sparkles, Video, User } from "lucide
 
 const HomePage = () => {
   const features = [
-    { name: "Thoughts", icon: <FileText className="w-6 h-6 text-purple-600" />, link: "/notes" },
-    { name: "Images", icon: <Image className="w-6 h-6 text-purple-600" />, link: "/images" },
+    { name: "Thoughts", icon: <FileText className="w-6 h-6 text-purple-600" />, link: "/thoughts" },
+    { name: "Images", icon: <Image className="w-6 h-6 text-purple-600" />, link: "/image" },
     { name: "Audio", icon: <Music className="w-6 h-6 text-purple-600" />, link: "/audio" },
     { name: "Playlist", icon: <ListMusic className="w-6 h-6 text-purple-600" />, link: "/playlist" },
     { name: "Predictions", icon: <Sparkles className="w-6 h-6 text-purple-600" />, link: "/predictions" },

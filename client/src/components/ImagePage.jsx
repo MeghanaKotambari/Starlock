@@ -1,70 +1,112 @@
-import React, { useState } from "react"
-import { Camera, Upload, GalleryVerticalEnd, Trash2 } from "lucide-react"
+import React, { useState } from "react";
+import axios from "axios";
+import { Camera, Upload } from "lucide-react";
 
 const ImagesPage = () => {
-  const [images, setImages] = useState([])
+  const [image, setImage] = useState(null); // { preview, file }
+  const [description, setDescription] = useState("");
+  const [uploading, setUploading] = useState(false);
 
-  // Handle file upload/capture
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files)
-    const newImages = files.map((file) => ({
-      src: URL.createObjectURL(file),
-      description: "",
-    }))
-    setImages((prev) => [...prev, ...newImages])
-  }
+  // Convert file to preview URL
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-  // Update description
-  const handleDescriptionChange = (index, value) => {
-    const updatedImages = [...images]
-    updatedImages[index].description = value
-    setImages(updatedImages)
-  }
+    setImage({ preview: URL.createObjectURL(file), file });
+    setDescription("");
+    e.target.value = null; // reset input
+  };
 
-  // Delete image
-  const handleDelete = (index) => {
-    const updatedImages = images.filter((_, i) => i !== index)
-    setImages(updatedImages)
-  }
+  const handleSubmit = async () => {
+    if (!image || !description) return alert("Image and description required.");
+
+    setUploading(true);
+
+    try {
+      // Prepare form for Pinata
+      const formData = new FormData();
+      formData.append("file", image.file);
+      formData.append(
+        "pinataMetadata",
+        JSON.stringify({ name: image.file.name })
+      );
+      formData.append("pinataOptions", JSON.stringify({ cidVersion: 1 }));
+
+      // Upload to Pinata
+      const res = await axios.post(
+        "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            pinata_api_key: import.meta.env.VITE_PINATA_API_KEY,
+            pinata_secret_api_key: import.meta.env.VITE_PINATA_SECRET_API_KEY,
+          },
+        }
+      );
+
+      const ipfsHash = res.data.IpfsHash;
+
+      // Send IPFS hash + description to your backend
+      const response = await axios.post(
+        "http://localhost:3000/api/starlock/image/addImage",
+        {
+          image: ipfsHash,
+          imageDescription: description,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      console.log(response.data);
+      alert("Image uploaded successfully!");
+
+      // Reset
+      setImage(null);
+      setDescription("");
+    } catch (err) {
+      console.error("Upload failed:", err);
+      alert("Failed to upload.");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50 to-gray-100 flex items-center justify-center px-6 py-10">
-      <div className="w-full max-w-7xl">
+      <div className="w-full max-w-xl">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="flex items-center justify-center space-x-3 mb-4">
-            <GalleryVerticalEnd className="h-12 w-12 text-purple-500" />
-            <h1 className="text-4xl font-extrabold text-purple-800 drop-shadow">
-              Memory Vault
-            </h1>
-          </div>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-           “Every picture tells your story.”
+          <h1 className="text-4xl font-extrabold text-purple-800 drop-shadow flex items-center justify-center gap-2">
+            <Upload className="h-10 w-10 text-purple-500" /> Memory Vault
+          </h1>
+          <p className="text-lg text-gray-600 mt-2">
+            “Every picture tells your story.”
           </p>
         </div>
 
-        {/* Upload & Capture Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
-          {/* Upload Box */}
-          <label className="cursor-pointer group flex flex-col items-center justify-center border-2 border-dashed border-purple-200 rounded-2xl p-10 bg-white/70 backdrop-blur-lg shadow-md hover:shadow-xl transition">
-            <Upload className="h-14 w-14 text-purple-500 mb-3 group-hover:scale-110 transition" />
-            <span className="text-gray-800 font-semibold text-lg">
-              Upload Images
+        {/* Upload / Capture buttons */}
+        <div className="flex gap-8 justify-center mb-10">
+          <label className="cursor-pointer group flex flex-col items-center justify-center border-2 border-dashed border-purple-300 rounded-2xl p-8 bg-white/80 backdrop-blur-lg shadow-md hover:shadow-xl transition w-40">
+            <Upload className="h-12 w-12 text-purple-600 mb-2 group-hover:scale-110 transition" />
+            <span className="text-gray-800 font-semibold text-center">
+              Upload Image
             </span>
             <input
               type="file"
               accept="image/*"
-              multiple
               className="hidden"
               onChange={handleFileChange}
             />
           </label>
 
-          {/* Capture Box */}
-          <label className="cursor-pointer group flex flex-col items-center justify-center border-2 border-dashed border-purple-200 rounded-2xl p-10 bg-white/70 backdrop-blur-lg shadow-md hover:shadow-xl transition">
-            <Camera className="h-14 w-14 text-purple-500 mb-3 group-hover:scale-110 transition" />
-            <span className="text-gray-800 font-semibold text-lg">
-              Capture with Camera
+          <label className="cursor-pointer group flex flex-col items-center justify-center border-2 border-dashed border-purple-300 rounded-2xl p-8 bg-white/80 backdrop-blur-lg shadow-md hover:shadow-xl transition w-40">
+            <Camera className="h-12 w-12 text-purple-600 mb-2 group-hover:scale-110 transition" />
+            <span className="text-gray-800 font-semibold text-center">
+              Capture Photo
             </span>
             <input
               type="file"
@@ -76,50 +118,33 @@ const ImagesPage = () => {
           </label>
         </div>
 
-        {/* Gallery Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {images.length > 0 ? (
-            images.map((img, idx) => (
-              <div
-                key={idx}
-                className="relative bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg hover:shadow-2xl transition p-5 flex flex-col"
-              >
-                {/* Delete Button */}
-                <button
-                  onClick={() => handleDelete(idx)}
-                  className="absolute top-3 right-3 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 shadow-md"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-
-                {/* Image */}
-                <img
-                  src={img.src}
-                  alt={`Uploaded ${idx}`}
-                  className="w-full h-48 object-cover rounded-xl mb-4 shadow-sm"
-                />
-
-                {/* Description */}
-                <textarea
-                  value={img.description}
-                  onChange={(e) =>
-                    handleDescriptionChange(idx, e.target.value)
-                  }
-                  placeholder="Write your thoughts or a caption..."
-                  className="w-full text-gray-700 border border-purple-200 rounded-xl p-3 bg-gray-50/60 focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none"
-                  rows={4}
-                />
-              </div>
-            ))
-          ) : (
-            <p className="text-gray-600 text-center col-span-full italic">
-              “Store💜 Write💜 Relive💜” 
-            </p>
-          )}
-        </div>
+        {/* Preview + Description */}
+        {image && (
+          <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-6 border border-purple-200 max-w-md mx-auto">
+            <img
+              src={image.preview}
+              alt="Selected"
+              className="w-full h-64 object-contain rounded-lg mb-4"
+            />
+            <textarea
+              rows={4}
+              placeholder="Add a description or thoughts about this image..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full p-3 rounded-xl border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none bg-gray-50"
+            />
+            <button
+              onClick={handleSubmit}
+              disabled={uploading}
+              className="mt-4 w-full bg-purple-600 text-white py-3 rounded-xl shadow hover:bg-purple-700 transition disabled:opacity-60"
+            >
+              {uploading ? "Uploading..." : "Send to Backend"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ImagesPage
+export default ImagesPage;
