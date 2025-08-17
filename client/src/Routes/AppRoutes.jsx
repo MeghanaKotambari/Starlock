@@ -7,6 +7,8 @@ import PlaylistPage from "@/components/PlaylistPage";
 import PredictionPage from "@/components/PredictionsPage";
 import ProfilePage from "@/components/ProfilePage";
 import RegisterPage from "@/components/RegisterPage";
+import SetTimePage from "@/components/SetTimePage";
+import ShowPage from "@/components/ShowPage";
 import ThoughtsPage from "@/components/ThoughtsPage";
 import VideoPage from "@/components/VideoPage";
 import React from "react";
@@ -26,6 +28,10 @@ const AppRoutes = () => {
       <Route path="/playlist" element={<PlaylistPage />} />
       <Route path="/predictions" element={<PredictionPage />} />
       <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/settime" element={<SetTimePage />} />
+      <Route path="/show" element={<ShowPage />} />
+      
+      
     </Routes>
   );
 };
