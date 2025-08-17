@@ -10,7 +10,7 @@ import ProfilePage from './components/ProfilePage'
 import RegisterPage from './components/RegisterPage'
 import ThoughtsPage from './components/ThoughtsPage'
 import VideoPage from './components/VideoPage'
-import Routes from './Routes/Routes'
+
 
 function App() {
   return (
