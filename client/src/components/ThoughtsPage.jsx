@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { PlusCircle, Sparkles } from "lucide-react";
+import { Bounce, toast } from "react-toastify";
 
 const ThoughtsPage = ({ capsuleId = null }) => {
   const [thoughtTitle, setThoughtTitle] = useState("");
@@ -20,7 +21,7 @@ const ThoughtsPage = ({ capsuleId = null }) => {
 
     try {
       const response = await axios.post(
-        `http://localhost:3000/api/starlock/thoughts/addThoughts`,
+        `http://localhost:3000/api/starlock/thought/addThoughts`,
         thoughtObject,
         {
           headers: {
@@ -30,7 +31,19 @@ const ThoughtsPage = ({ capsuleId = null }) => {
         }
       );
       console.log(response.data);
+      toast.success(response.data.message, {
+        position: "top-right",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
     } catch (error) {
+      toast.error(error.response.data.message, {
+        position: "top-right",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
       console.error("Error sending thought to backend:", error);
     }
   };

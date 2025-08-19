@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Video, Upload, GalleryVerticalEnd, Trash2 } from "lucide-react";
 import axios from "axios";
+import { Bounce, toast } from "react-toastify";
 
 const VideoPage = () => {
   const [videos, setVideos] = useState([]);
@@ -87,12 +88,22 @@ const VideoPage = () => {
         }
       );
 
-      alert("Video saved to backend successfully!");
+      toast.success(res.data.message, {
+        position: "top-right",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
       console.log("Backend response:", res.data);
       setVideos((prev) => prev.filter((_, i) => i !== index));
     } catch (error) {
       console.error("Error saving to backend:", error);
-      alert("Failed to save video to backend.");
+      toast.error(error.response.data.message, {
+        position: "top-right",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   };
 

@@ -19,7 +19,7 @@ module.exports.setImageCapsule = async (req, res) => {
     if (existingCapsule) {
       return res
         .status(400)
-        .json({ message: "Thought Capsule already exists for this user" });
+        .json({ message: "Image Capsule already exists for this user" });
     }
 
     const newImageCapsule = await imageCapsuleModel.create({
@@ -78,7 +78,7 @@ module.exports.addImages = async (req, res) => {
     }
 
     return res.status(201).json({
-      message: "Thought added successfully to capsule",
+      message: "Image added successfully to capsule",
       success: true,
       images: newImage,
       imageCapsuleModel: updatedCapsule,

@@ -7,6 +7,7 @@ const audioRoute = require("./routes/audio.route");
 const videoRoute = require("./routes/video.route");
 const imageRoute = require("./routes/image.route");
 const playlistRoute = require("./routes/playlist.route");
+const profileRoute = require("./routes/profileDetails.route");
 const cors = require("cors");
 const predictionRoute = require("./routes/prediction.route");
 require("dotenv").config();
@@ -24,12 +25,13 @@ const corsOption = {
 app.use(cors(corsOption));
 
 app.use("/api/starlock/auth", authRoute);
-app.use("/api/starlock/thoughts", thoughtRoute);
+app.use("/api/starlock/thought", thoughtRoute);
 app.use("/api/starlock/audio", audioRoute);
 app.use("/api/starlock/video", videoRoute);
 app.use("/api/starlock/image", imageRoute);
 app.use("/api/starlock/playlist", playlistRoute);
 app.use("/api/starlock/prediction", predictionRoute);
+app.use("/api/starlock/profile", profileRoute);
 
 const PORT = process.env.PORT || 8080;
 

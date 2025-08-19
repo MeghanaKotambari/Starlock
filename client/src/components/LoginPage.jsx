@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/authSlice";
+import { useNavigate } from "react-router-dom";
+import { Bounce, toast } from "react-toastify";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -9,6 +11,26 @@ const LoginPage = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    const fetchDetails = async () => {
+      const res = await axios.get(
+        `http://localhost:3000/api/starlock/profile/getCapsulesDetails`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      if (res.data.success) {
+        setSuccess(res.data.success);
+      }
+    };
+    fetchDetails();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,18 +62,25 @@ const LoginPage = () => {
       console.log(response.data);
       if (response.data.success) {
         dispatch(setUser(response.data.user));
+        if (success) {
+          navigate("/home");
+        } else {
+          navigate("/settime");
+        }
+        toast.success(response.data.message, {
+          position: "top-right",
+          autoClose: 5000,
+          theme: "light",
+          transition: Bounce,
+        });
       }
-
-      // You can handle the response here, e.g. save token, redirect etc.
-      console.log("Login success:", response.data);
-
-      // Example: redirect or update app state
-      // window.location.href = "/dashboard";
     } catch (err) {
-      console.error("Login error:", err);
-      setError(
-        err.response?.data?.message || "Login failed. Please try again."
-      );
+      toast.error(err.response.data.message, {
+        position: "top-right",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
     } finally {
       setLoading(false);
     }

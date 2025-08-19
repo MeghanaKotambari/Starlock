@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Zap } from "lucide-react";
 import axios from "axios";
+import { Bounce, toast } from "react-toastify";
 
 const QUESTIONS = [
   "What memory always makes you smile?",
@@ -38,7 +39,7 @@ const PredictionPage = () => {
     setLoading(true);
 
     try {
-      await axios.post(
+      const response = await axios.post(
         "http://localhost:3000/api/starlock/prediction/addPrediction",
         {
           question,
@@ -52,11 +53,21 @@ const PredictionPage = () => {
         }
       );
 
-      alert("Your answer was submitted!");
+      toast.success(response.data.message, {
+        position: "top-right",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
       generateRandomQuestion(); // ask a new question
     } catch (error) {
       console.error("Error submitting answer:", error);
-      alert("Failed to submit. Please try again.");
+      toast.error(error.response.data.message, {
+        position: "top-right",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
     } finally {
       setLoading(false);
     }

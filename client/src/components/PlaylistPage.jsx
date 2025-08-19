@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Plus } from "lucide-react";
 import axios from "axios";
+import { Bounce, toast } from "react-toastify";
 
 const PlaylistPage = () => {
   const [playlistName, setPlaylistName] = useState("");
@@ -31,13 +32,23 @@ const PlaylistPage = () => {
       );
 
       console.log("Playlist added:", response.data);
-      alert("Playlist added successfully!");
+      toast.success(response.data.message, {
+        position: "top-right",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
 
       setPlaylistName("");
       setPlaylistLink("");
     } catch (error) {
       console.error("Failed to add playlist:", error);
-      alert("Failed to add playlist.");
+      toast.error(error.response.data.message, {
+        position: "top-right",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
     } finally {
       setLoading(false);
     }

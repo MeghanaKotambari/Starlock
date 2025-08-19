@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Mic, Upload, GalleryVerticalEnd, Trash2 } from "lucide-react";
+import { Bounce, toast } from "react-toastify";
 
 const AudioPage = () => {
   const [audios, setAudios] = useState([]);
@@ -73,7 +74,12 @@ const AudioPage = () => {
         }
       );
       console.log(response.data);
-      alert("Audio uploaded to IPFS and sent to backend!");
+      toast.success(response.data.message, {
+        position: "top-right",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
 
       // Mark uploaded in state
       const updated = [...audios];
@@ -81,7 +87,12 @@ const AudioPage = () => {
       setAudios(updated);
     } catch (err) {
       console.error("Upload error:", err);
-      alert("Failed to upload audio.");
+      toast.error(err.response.data.message, {
+        position: "top-right",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
     } finally {
       setUploadingIndex(null);
     }

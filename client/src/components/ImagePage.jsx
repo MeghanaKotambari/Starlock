@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Camera, Upload } from "lucide-react";
+import { Bounce, toast } from "react-toastify";
 
 const ImagesPage = () => {
   const [image, setImage] = useState(null); // { preview, file }
@@ -62,14 +63,24 @@ const ImagesPage = () => {
         }
       );
       console.log(response.data);
-      alert("Image uploaded successfully!");
+      toast.success(response.data.message, {
+        position: "top-right",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
 
       // Reset
       setImage(null);
       setDescription("");
     } catch (err) {
       console.error("Upload failed:", err);
-      alert("Failed to upload.");
+      toast.error(err.response.data.message, {
+        position: "top-right",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
     } finally {
       setUploading(false);
     }
