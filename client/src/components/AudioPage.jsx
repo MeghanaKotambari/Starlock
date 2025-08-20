@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Mic, Upload, GalleryVerticalEnd, Trash2 } from "lucide-react";
+import { Mic, Upload, GalleryVerticalEnd } from "lucide-react";
 import { Bounce, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const AudioPage = () => {
   const [audios, setAudios] = useState([]);
   const [uploadingIndex, setUploadingIndex] = useState(null);
+  const navigate = useNavigate();
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
@@ -22,10 +24,6 @@ const AudioPage = () => {
     const updated = [...audios];
     updated[index].description = value;
     setAudios(updated);
-  };
-
-  const handleDelete = (index) => {
-    setAudios((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleUpload = async (index) => {
@@ -80,6 +78,7 @@ const AudioPage = () => {
         theme: "light",
         transition: Bounce,
       });
+      navigate("/home");
 
       // Mark uploaded in state
       const updated = [...audios];
@@ -115,7 +114,7 @@ const AudioPage = () => {
         </div>
 
         {/* Upload & Record */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
+        <div className="w-full flex items-center justify-center gap-6 mb-12">
           <label className="cursor-pointer group flex flex-col items-center justify-center border-2 border-dashed border-purple-200 rounded-2xl p-10 bg-white/70 backdrop-blur-lg shadow-md hover:shadow-xl transition">
             <Upload className="h-14 w-14 text-purple-500 mb-3 group-hover:scale-110 transition" />
             <span className="text-gray-800 font-semibold text-lg">
@@ -129,37 +128,16 @@ const AudioPage = () => {
               onChange={handleFileChange}
             />
           </label>
-
-          <label className="cursor-pointer group flex flex-col items-center justify-center border-2 border-dashed border-purple-200 rounded-2xl p-10 bg-white/70 backdrop-blur-lg shadow-md hover:shadow-xl transition">
-            <Mic className="h-14 w-14 text-purple-500 mb-3 group-hover:scale-110 transition" />
-            <span className="text-gray-800 font-semibold text-lg">
-              Record Audio
-            </span>
-            <input
-              type="file"
-              accept="audio/*"
-              capture="microphone"
-              className="hidden"
-              onChange={handleFileChange}
-            />
-          </label>
         </div>
 
         {/* Audio Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+        <div className="gap-8">
           {audios.length > 0 ? (
             audios.map((audio, idx) => (
               <div
                 key={idx}
                 className="relative bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg hover:shadow-2xl transition p-5 flex flex-col"
               >
-                <button
-                  onClick={() => handleDelete(idx)}
-                  className="absolute top-3 right-3 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 shadow-md"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-
                 <audio src={audio.src} controls className="w-full mb-4" />
 
                 <textarea
@@ -181,7 +159,7 @@ const AudioPage = () => {
                     ? "Uploaded ✅"
                     : uploadingIndex === idx
                     ? "Uploading..."
-                    : "Upload to IPFS"}
+                    : "Add"}
                 </button>
               </div>
             ))

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Zap } from "lucide-react";
 import axios from "axios";
 import { Bounce, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const QUESTIONS = [
   "What memory always makes you smile?",
@@ -12,12 +13,45 @@ const QUESTIONS = [
   "What’s one sound that brings back strong memories?",
   "Who in your life has shaped your best memories?",
   "What smell reminds you of home?",
+  "What was your favorite childhood game or activity?",
+  "Which family tradition do you treasure the most?",
+  "What song instantly takes you back in time?",
+  "Who was your childhood best friend, and what did you do together?",
+  "What’s the first vacation you remember?",
+  "What was your favorite subject in school and why?",
+  "What’s a meal you’ll never forget?",
+  "What’s the best gift you’ve ever received?",
+  "Which teacher had the biggest impact on your life?",
+  "What was your first big achievement?",
+  "What memory do you wish you could photograph?",
+  "What place from your childhood do you still think about?",
+  "What toy or object meant the most to you as a kid?",
+  "What was your happiest moment in college or school?",
+  "What’s the funniest memory you have with your friends?",
+  "What was your favorite TV show or cartoon growing up?",
+  "What’s a holiday memory you’ll never forget?",
+  "Who taught you an important life lesson?",
+  "What was your favorite birthday celebration?",
+  "What’s a memory that always makes you laugh?",
+  "What was your first job experience like?",
+  "What’s a tradition you want to pass on?",
+  "What memory do you replay in your head often?",
+  "What’s the earliest memory you can recall?",
+  "What’s the best trip you’ve ever taken?",
+  "Who made you feel most supported in your childhood?",
+  "What’s one piece of advice someone gave you that stuck?",
+  "What’s the most adventurous thing you did as a kid?",
+  "What festival or celebration do you miss the most?",
+  "What memory do you think defines who you are?",
+  "What was your proudest school memory?",
+  "What’s a childhood secret hideout you loved?",
 ];
 
 const PredictionPage = () => {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   // Generate random question
   const generateRandomQuestion = () => {
@@ -59,6 +93,7 @@ const PredictionPage = () => {
         theme: "light",
         transition: Bounce,
       });
+      navigate("/home");
       generateRandomQuestion(); // ask a new question
     } catch (error) {
       console.error("Error submitting answer:", error);
@@ -100,7 +135,7 @@ const PredictionPage = () => {
           disabled={loading}
           className="w-full bg-purple-600 text-white py-3 rounded-xl shadow hover:bg-purple-700 transition disabled:opacity-60"
         >
-          {loading ? "Submitting..." : "Answer"}
+          {loading ? "Adding..." : "Answer"}
         </button>
       </div>
     </div>

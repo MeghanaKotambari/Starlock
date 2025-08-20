@@ -27,6 +27,7 @@ const LoginPage = () => {
       );
       if (res.data.success) {
         setSuccess(res.data.success);
+        console.log(res.data);
       }
     };
     fetchDetails();
@@ -62,7 +63,7 @@ const LoginPage = () => {
       console.log(response.data);
       if (response.data.success) {
         dispatch(setUser(response.data.user));
-        if (success) {
+        if (success === true) {
           navigate("/home");
         } else {
           navigate("/settime");

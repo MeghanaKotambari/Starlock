@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { Plus } from "lucide-react";
 import axios from "axios";
 import { Bounce, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const PlaylistPage = () => {
   const [playlistName, setPlaylistName] = useState("");
   const [playlistLink, setPlaylistLink] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleAddPlaylist = async () => {
     if (!playlistName.trim() || !playlistLink.trim()) {
@@ -38,6 +40,7 @@ const PlaylistPage = () => {
         theme: "light",
         transition: Bounce,
       });
+      navigate("/home");
 
       setPlaylistName("");
       setPlaylistLink("");

@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import axios from "axios";
 import { PlusCircle, Sparkles } from "lucide-react";
 import { Bounce, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const ThoughtsPage = ({ capsuleId = null }) => {
   const [thoughtTitle, setThoughtTitle] = useState("");
   const [thoughtDescription, setThoughtDescription] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const addThought = async () => {
     if (thoughtTitle.trim() === "" || thoughtDescription.trim() === "") return;
@@ -20,6 +23,7 @@ const ThoughtsPage = ({ capsuleId = null }) => {
     setThoughtDescription("");
 
     try {
+      setLoading(true);
       const response = await axios.post(
         `http://localhost:3000/api/starlock/thought/addThoughts`,
         thoughtObject,
@@ -37,6 +41,7 @@ const ThoughtsPage = ({ capsuleId = null }) => {
         theme: "light",
         transition: Bounce,
       });
+      navigate("/home");
     } catch (error) {
       toast.error(error.response.data.message, {
         position: "top-right",
@@ -45,6 +50,8 @@ const ThoughtsPage = ({ capsuleId = null }) => {
         transition: Bounce,
       });
       console.error("Error sending thought to backend:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -84,9 +91,10 @@ const ThoughtsPage = ({ capsuleId = null }) => {
           />
           <button
             onClick={addThought}
+            disabled={loading}
             className="flex items-center justify-center gap-2 px-5 py-3 bg-purple-600 text-white rounded-xl shadow-md hover:bg-purple-700 transition self-end"
           >
-            <PlusCircle className="w-5 h-5" /> Add
+            <PlusCircle className="w-5 h-5" /> {loading ? "Adding..." : "Add"}
           </button>
         </div>
       </div>

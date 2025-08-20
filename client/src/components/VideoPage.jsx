@@ -1,11 +1,14 @@
 import React, { useState } from "react";
-import { Video, Upload, GalleryVerticalEnd, Trash2 } from "lucide-react";
+import { Video, Upload, GalleryVerticalEnd } from "lucide-react";
 import axios from "axios";
 import { Bounce, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const VideoPage = () => {
   const [videos, setVideos] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleFileChange = async (e) => {
     const files = Array.from(e.target.files);
@@ -61,11 +64,6 @@ const VideoPage = () => {
     setVideos(updated);
   };
 
-  const handleDelete = (index) => {
-    const updated = videos.filter((_, i) => i !== index);
-    setVideos(updated);
-  };
-
   const handleSaveToBackend = async (index) => {
     const { ipfsHash, description } = videos[index];
 
@@ -74,6 +72,7 @@ const VideoPage = () => {
     }
 
     try {
+      setLoading(true);
       const res = await axios.post(
         "http://localhost:3000/api/starlock/video/addVideo",
         {
@@ -94,6 +93,7 @@ const VideoPage = () => {
         theme: "light",
         transition: Bounce,
       });
+      navigate("/home");
       console.log("Backend response:", res.data);
       setVideos((prev) => prev.filter((_, i) => i !== index));
     } catch (error) {
@@ -104,6 +104,8 @@ const VideoPage = () => {
         theme: "light",
         transition: Bounce,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -124,7 +126,7 @@ const VideoPage = () => {
         </div>
 
         {/* Upload Buttons */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
+        <div className="flex items-center justify-center gap-6 mb-12">
           <label className="cursor-pointer group flex flex-col items-center justify-center border-2 border-dashed border-purple-200 rounded-2xl p-10 bg-white/70 backdrop-blur-lg shadow-md hover:shadow-xl transition">
             <Upload className="h-14 w-14 text-purple-500 mb-3 group-hover:scale-110 transition" />
             <span className="text-gray-800 font-semibold text-lg">
@@ -134,21 +136,6 @@ const VideoPage = () => {
               type="file"
               accept="video/*"
               multiple
-              className="hidden"
-              onChange={handleFileChange}
-              disabled={uploading}
-            />
-          </label>
-
-          <label className="cursor-pointer group flex flex-col items-center justify-center border-2 border-dashed border-purple-200 rounded-2xl p-10 bg-white/70 backdrop-blur-lg shadow-md hover:shadow-xl transition">
-            <Video className="h-14 w-14 text-purple-500 mb-3 group-hover:scale-110 transition" />
-            <span className="text-gray-800 font-semibold text-lg">
-              {uploading ? "Uploading..." : "Record with Camera"}
-            </span>
-            <input
-              type="file"
-              accept="video/*"
-              capture="environment"
               className="hidden"
               onChange={handleFileChange}
               disabled={uploading}
@@ -164,13 +151,6 @@ const VideoPage = () => {
                 key={idx}
                 className="relative bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg hover:shadow-2xl transition p-5 flex flex-col"
               >
-                <button
-                  onClick={() => handleDelete(idx)}
-                  className="absolute top-3 right-3 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 shadow-md"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-
                 <video
                   src={vid.src}
                   controls
@@ -190,7 +170,7 @@ const VideoPage = () => {
                   className="w-full bg-purple-600 text-white py-2 rounded-xl hover:bg-purple-700 transition disabled:opacity-60"
                   disabled={!vid.description.trim()}
                 >
-                  Save to Backend
+                  {loading ? "Adding..." : "Add"}
                 </button>
               </div>
             ))

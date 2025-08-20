@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Camera, Upload } from "lucide-react";
 import { Bounce, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const ImagesPage = () => {
   const [image, setImage] = useState(null); // { preview, file }
   const [description, setDescription] = useState("");
   const [uploading, setUploading] = useState(false);
+  const navigate = useNavigate();
 
   // Convert file to preview URL
   const handleFileChange = async (e) => {
@@ -69,7 +71,7 @@ const ImagesPage = () => {
         theme: "light",
         transition: Bounce,
       });
-
+      navigate("/home");
       // Reset
       setImage(null);
       setDescription("");
@@ -113,20 +115,6 @@ const ImagesPage = () => {
               onChange={handleFileChange}
             />
           </label>
-
-          <label className="cursor-pointer group flex flex-col items-center justify-center border-2 border-dashed border-purple-300 rounded-2xl p-8 bg-white/80 backdrop-blur-lg shadow-md hover:shadow-xl transition w-40">
-            <Camera className="h-12 w-12 text-purple-600 mb-2 group-hover:scale-110 transition" />
-            <span className="text-gray-800 font-semibold text-center">
-              Capture Photo
-            </span>
-            <input
-              type="file"
-              accept="image/*"
-              capture="environment"
-              className="hidden"
-              onChange={handleFileChange}
-            />
-          </label>
         </div>
 
         {/* Preview + Description */}
@@ -147,9 +135,9 @@ const ImagesPage = () => {
             <button
               onClick={handleSubmit}
               disabled={uploading}
-              className="mt-4 w-full bg-purple-600 text-white py-3 rounded-xl shadow hover:bg-purple-700 transition disabled:opacity-60"
+              className="mt-4 w-full cursor-pointer bg-purple-600 text-white py-3 rounded-xl shadow hover:bg-purple-700 transition disabled:opacity-60"
             >
-              {uploading ? "Uploading..." : "Send to Backend"}
+              {uploading ? "Uploading..." : "Add"}
             </button>
           </div>
         )}
