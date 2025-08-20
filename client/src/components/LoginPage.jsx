@@ -27,7 +27,7 @@ const LoginPage = () => {
       );
       if (res.data.success) {
         setSuccess(res.data.success);
-        console.log(res.data);
+        console.log("Capsules Details :", res.data);
       }
     };
     fetchDetails();
@@ -61,13 +61,17 @@ const LoginPage = () => {
       );
 
       console.log(response.data);
-      if (response.data.success) {
+      if (response.data.success && !success) {
         dispatch(setUser(response.data.user));
-        if (success === true) {
-          navigate("/home");
-        } else {
-          navigate("/settime");
-        }
+        navigate("/settime");
+        toast.success(response.data.message, {
+          position: "top-right",
+          autoClose: 5000,
+          theme: "light",
+          transition: Bounce,
+        });
+      } else {
+        navigate("/home");
         toast.success(response.data.message, {
           position: "top-right",
           autoClose: 5000,
