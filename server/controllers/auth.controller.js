@@ -49,8 +49,15 @@ module.exports.login = async (req, res) => {
       return res.status(400).json({ message: "Email not found" });
     }
 
-    const token = await jwt.sign({ userId: user._id }, process.env.JWT_TOKEN);
-    res.cookie("token", token);
+    const token = await jwt.sign({ userId: user._id }, process.env.JWT_TOKEN, {
+      expiresIn: "1d",
+    });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
 
     return res.status(200).json({
       message: "User Login Successfully",
