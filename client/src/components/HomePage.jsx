@@ -44,7 +44,7 @@ const HomePage = () => {
   ];
 
   return (
-    <div className="h-screen bg-gradient-to-br from-gray-200 via-gray-100 to-purple-50 flex flex-col items-center justify-center">
+    <div className="h-screen bg-gradient-to-br from-gray-200 via-gray-100 to-purple-50 flex flex-col items-center pt-10 justify-center">
       {/* Hero Section */}
       <section className="text-center mt-12 max-w-2xl">
         <h2 className="text-4xl font-extrabold text-purple-800">
