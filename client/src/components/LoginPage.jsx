@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/authSlice";
@@ -12,26 +12,6 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [success, setSuccess] = useState(false);
-
-  useEffect(() => {
-    const fetchDetails = async () => {
-      const res = await axios.get(
-        `https://starlockserver.onrender.com/api/starlock/profile/getCapsulesDetails`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
-      if (res.data.success) {
-        setSuccess(res.data.success);
-        console.log("Capsules Details :", res.data);
-      }
-    };
-    fetchDetails();
-  }, [success]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -61,17 +41,27 @@ const LoginPage = () => {
       );
 
       console.log(response.data);
-      if (response.data.success && !success) {
+      if (response.data.success) {
         dispatch(setUser(response.data.user));
-        navigate("/settime");
-        toast.success(response.data.message, {
-          position: "top-right",
-          autoClose: 5000,
-          theme: "light",
-          transition: Bounce,
-        });
-      } else {
-        navigate("/home");
+
+        const capsuleRes = await axios.get(
+          `https://starlockserver.onrender.com/api/starlock/profile/getCapsulesDetails`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            withCredentials: true,
+          }
+        );
+
+        const hasSetTime = capsuleRes.data.success;
+
+        if (!hasSetTime) {
+          navigate("/settime");
+        } else {
+          navigate("/home");
+        }
+
         toast.success(response.data.message, {
           position: "top-right",
           autoClose: 5000,
