@@ -9,7 +9,7 @@ const Navbar = () => {
         <>
           {" "}
           {/* Header */}
-          <header className="w-full fixed bg-white shadow-md shadow-gray-300 border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+          <header className="w-full fixed bg-white shadow-md shadow-gray-300 border-b border-gray-200 px-6 py-4 flex justify-between z-20 items-center">
             <h1 className="text-2xl font-bold text-purple-700">Starlock ✨</h1>
             <a
               href="/profile"
