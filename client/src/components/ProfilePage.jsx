@@ -112,7 +112,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50 to-gray-100 px-6 py-10 flex justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50 to-gray-100 px-6 py-20 flex justify-center">
       <div className="w-full max-w-5xl">
         {/* Profile Card */}
         <div className="bg-white/80 backdrop-blur-lg shadow-xl rounded-2xl p-8 flex flex-col md:flex-row items-center gap-8 mb-10">
