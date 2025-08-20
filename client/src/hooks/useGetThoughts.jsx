@@ -10,7 +10,7 @@ const useGetThoughts = () => {
     const fetchThoughts = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/starlock/thought/getThoughts`,
+          `https://starlockserver.onrender.com/api/starlock/thought/getThoughts`,
           {
             headers: { "Content-Type": "application/json" },
             withCredentials: true,

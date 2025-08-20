@@ -28,7 +28,7 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchUploadCount = async () => {
       const response = await axios.get(
-        `http://localhost:3000/api/starlock/profile/getUploadsLength`,
+        `https://starlockserver.onrender.com/api/starlock/profile/getUploadsLength`,
         {
           headers: {
             "Content-Type": "application/json",

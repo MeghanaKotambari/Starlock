@@ -20,7 +20,7 @@ const PlaylistPage = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/starlock/playlist/addPlaylist",
+        "https://starlockserver.onrender.com/api/starlock/playlist/addPlaylist",
         {
           playlist: playlistName,
           playlistLink: playlistLink,

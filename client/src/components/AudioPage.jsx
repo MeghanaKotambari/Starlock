@@ -59,7 +59,7 @@ const AudioPage = () => {
       const ipfsHash = res.data.IpfsHash;
 
       const response = await axios.post(
-        "http://localhost:3000/api/starlock/audio/addAudio",
+        "https://starlockserver.onrender.com/api/starlock/audio/addAudio",
         {
           audio: ipfsHash,
           audioDescription: audio.description,

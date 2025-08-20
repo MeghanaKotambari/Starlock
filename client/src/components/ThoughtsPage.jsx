@@ -25,7 +25,7 @@ const ThoughtsPage = ({ capsuleId = null }) => {
     try {
       setLoading(true);
       const response = await axios.post(
-        `http://localhost:3000/api/starlock/thought/addThoughts`,
+        `https://starlockserver.onrender.com/api/starlock/thought/addThoughts`,
         thoughtObject,
         {
           headers: {

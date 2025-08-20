@@ -10,7 +10,7 @@ const useGetImages = () => {
     const fetchImages = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/starlock/image/getImages`,
+          `https://starlockserver.onrender.com/api/starlock/image/getImages`,
           {
             headers: {
               "Content-Type": "application/json",

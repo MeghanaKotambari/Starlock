@@ -17,7 +17,7 @@ const LoginPage = () => {
   useEffect(() => {
     const fetchDetails = async () => {
       const res = await axios.get(
-        `http://localhost:3000/api/starlock/profile/getCapsulesDetails`,
+        `https://starlockserver.onrender.com/api/starlock/profile/getCapsulesDetails`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -47,7 +47,7 @@ const LoginPage = () => {
     try {
       // Adjust URL to your backend login endpoint
       const response = await axios.post(
-        "http://localhost:3000/api/starlock/auth/login",
+        "https://starlockserver.onrender.com/api/starlock/auth/login",
         {
           email,
           password,

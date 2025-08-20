@@ -10,7 +10,7 @@ const useGetPlaylist = () => {
     const fetchPlaylist = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/starlock/playlist/getPlaylists`,
+          `https://starlockserver.onrender.com/api/starlock/playlist/getPlaylists`,
           {
             headers: {
               "Content-Type": "application/json",

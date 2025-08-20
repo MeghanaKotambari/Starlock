@@ -52,7 +52,7 @@ const ImagesPage = () => {
 
       // Send IPFS hash + description to your backend
       const response = await axios.post(
-        "http://localhost:3000/api/starlock/image/addImage",
+        "https://starlockserver.onrender.com/api/starlock/image/addImage",
         {
           image: ipfsHash,
           imageDescription: description,

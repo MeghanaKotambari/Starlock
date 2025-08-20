@@ -24,7 +24,7 @@ const RegisterPage = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:3000/api/starlock/auth/register", // update if different
+        "https://starlockserver.onrender.com/api/starlock/auth/register", // update if different
         formData,
         {
           headers: { "Content-Type": "application/json" },
