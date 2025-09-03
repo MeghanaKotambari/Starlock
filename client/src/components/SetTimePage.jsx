@@ -19,7 +19,7 @@ const MemoryCard = ({ type, emoji, onSaved }) => {
     try {
       // call type-specific endpoint
       const response = await axios.post(
-        `https://starlockserver.onrender.com/api/starlock/${type.toLowerCase()}/set${type}Capsule`,
+        `http://localhost:3000/api/starlock/${type.toLowerCase()}/set${type}Capsule`,
         { timeToUnlock: isoString },
         {
           headers: { "Content-Type": "application/json" },

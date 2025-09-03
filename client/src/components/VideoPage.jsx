@@ -74,7 +74,7 @@ const VideoPage = () => {
     try {
       setLoading(true);
       const res = await axios.post(
-        "https://starlockserver.onrender.com/api/starlock/video/addVideo",
+        "http://localhost:3000/api/starlock/video/addVideo",
         {
           video: ipfsHash,
           videoDescription: description,

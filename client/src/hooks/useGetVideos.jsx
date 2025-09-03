@@ -10,7 +10,7 @@ const useGetVideos = () => {
     const fetchVideos = async () => {
       try {
         const response = await axios.get(
-          `https://starlockserver.onrender.com/api/starlock/video/getVideos`,
+          `http://localhost:3000/api/starlock/video/getVideos`,
           {
             headers: { "Content-Type": "application/json" },
             withCredentials: true,

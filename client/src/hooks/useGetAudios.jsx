@@ -10,7 +10,7 @@ const useGetAudios = () => {
     const fetchAudios = async () => {
       try {
         const response = await axios.get(
-          `https://starlockserver.onrender.com/api/starlock/audio/getAudios`,
+          `http://localhost:3000/api/starlock/audio/getAudios`,
           {
             headers: {
               "Content-Type": "application/json",

@@ -27,7 +27,7 @@ const LoginPage = () => {
     try {
       // Login request
       const response = await axios.post(
-        "https://starlockserver.onrender.com/api/starlock/auth/login",
+        "http://localhost:3000/api/starlock/auth/login",
         { email, password },
         {
           headers: { "Content-Type": "application/json" },
@@ -41,7 +41,7 @@ const LoginPage = () => {
         try {
           // Get capsule details
           const capsuleRes = await axios.get(
-            "https://starlockserver.onrender.com/api/starlock/profile/getCapsulesDetails",
+            "http://localhost:3000/api/starlock/profile/getCapsulesDetails",
             {
               headers: { "Content-Type": "application/json" },
               withCredentials: true,

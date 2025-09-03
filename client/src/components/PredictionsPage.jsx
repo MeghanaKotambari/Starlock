@@ -74,7 +74,7 @@ const PredictionPage = () => {
 
     try {
       const response = await axios.post(
-        "https://starlockserver.onrender.com/api/starlock/prediction/addPrediction",
+        "http://localhost:3000/api/starlock/prediction/addPrediction",
         {
           question,
           answer,
