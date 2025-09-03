@@ -25,41 +25,40 @@ const LoginPage = () => {
     }
 
     try {
-      // Adjust URL to your backend login endpoint
+      // Login request
       const response = await axios.post(
         "https://starlockserver.onrender.com/api/starlock/auth/login",
+        { email, password },
         {
-          email,
-          password,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           withCredentials: true,
         }
       );
 
-      console.log(response.data);
       if (response.data.success) {
         dispatch(setUser(response.data.user));
 
-        const capsuleRes = await axios.get(
-          `https://starlockserver.onrender.com/api/starlock/profile/getCapsulesDetails`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            withCredentials: true,
+        try {
+          // Get capsule details
+          const capsuleRes = await axios.get(
+            "https://starlockserver.onrender.com/api/starlock/profile/getCapsulesDetails",
+            {
+              headers: { "Content-Type": "application/json" },
+              withCredentials: true,
+              validateStatus: () => true, // ✅ prevents Axios from throwing on 404
+            }
+          );
+
+          console.log("Capsule API:", capsuleRes.data);
+
+          if (!capsuleRes.data.success) {
+            navigate("/settime");
+          } else {
+            navigate("/home");
           }
-        );
-
-        const hasSetTime = capsuleRes.data.success;
-
-        if (!hasSetTime) {
-          navigate("/settime");
-        } else {
-          navigate("/home");
+        } catch (capsuleErr) {
+          console.error("Capsule API Error:", capsuleErr);
+          navigate("/settime"); // fallback
         }
 
         toast.success(response.data.message, {
@@ -70,7 +69,8 @@ const LoginPage = () => {
         });
       }
     } catch (err) {
-      toast.error(err.response.data.message, {
+      console.error("Login Error:", err);
+      toast.error(err.response?.data?.message || "Login failed", {
         position: "top-right",
         autoClose: 5000,
         theme: "light",

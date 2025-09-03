@@ -23,7 +23,7 @@ module.exports.getCapsuleDetails = async (req, res) => {
     if (!image || !audio || !video || !thought || !prediction || !playlist) {
       console.log(image, audio, video, thought, prediction, playlist);
       return res
-        .status(404)
+        .status(200)
         .json({ message: "All the capsulas must be set", success: false });
     }
 
